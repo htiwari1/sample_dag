@@ -1,0 +1,96 @@
+name: blackbook-sweep
+
+on:
+  workflow_dispatch:
+    inputs:
+      providers:
+        description: "Comma-separated provider keys from providers.json"
+        default: "avis_one_direct,avis_partner_airindia,avis_partner_sc,transfeero,blacklane"
+      pickup:
+        default: "Thane West, Thane, Maharashtra"
+      dropoff:
+        default: "Chhatrapati Shivaji Maharaj International Airport Terminal 2, Mumbai"
+      dates:
+        description: "Comma-separated YYYY-MM-DD"
+        required: true
+      times:
+        default: "04:30,06:30,10:00"
+  schedule:
+    - cron: "17 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blackbook-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BLACKBOOK_DB: ${{ github.workspace }}/data/blackbook.db
+      BLACKBOOK_PROVIDERS: ${{ github.workspace }}/providers.json
+      BLACKBOOK_CAPTURES: ${{ github.workspace }}/data/captures
+      BLACKBOOK_WEBHOOK: ${{ secrets.BLACKBOOK_WEBHOOK }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Playwright
+        run: |
+          pip install playwright==1.48.0
+          playwright install --with-deps chromium
+
+      - name: Resolve inputs
+        id: cfg
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "providers=${{ inputs.providers }}" >> "$GITHUB_OUTPUT"
+            echo "pickup=${{ inputs.pickup }}" >> "$GITHUB_OUTPUT"
+            echo "dropoff=${{ inputs.dropoff }}" >> "$GITHUB_OUTPUT"
+            echo "dates=${{ inputs.dates }}" >> "$GITHUB_OUTPUT"
+            echo "times=${{ inputs.times }}" >> "$GITHUB_OUTPUT"
+          else
+            D1=$(TZ=Asia/Kolkata date -d "+3 days" +%F)
+            D2=$(TZ=Asia/Kolkata date -d "+14 days" +%F)
+            echo "providers=avis_one_direct,avis_partner_airindia,avis_partner_sc,transfeero,blacklane" >> "$GITHUB_OUTPUT"
+            echo "pickup=Thane West, Thane, Maharashtra" >> "$GITHUB_OUTPUT"
+            echo "dropoff=Chhatrapati Shivaji Maharaj International Airport Terminal 2, Mumbai" >> "$GITHUB_OUTPUT"
+            echo "dates=$D1,$D2" >> "$GITHUB_OUTPUT"
+            echo "times=04:30,06:30,10:00" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Init
+        run: |
+          mkdir -p data/captures
+          python blackbook.py init
+
+      - name: Sweep
+        continue-on-error: true
+        run: |
+          python blackbook.py monitor --once \
+            --providers "${{ steps.cfg.outputs.providers }}" \
+            --pickup "${{ steps.cfg.outputs.pickup }}" \
+            --dropoff "${{ steps.cfg.outputs.dropoff }}" \
+            --dates "${{ steps.cfg.outputs.dates }}" \
+            --times "${{ steps.cfg.outputs.times }}" \
+            --target-inr 4400 --alert-threshold 70 2>&1 | tee data/last_run.log
+
+      - name: Infer endpoints and write report
+        run: |
+          python blackbook.py infer | tee data/endpoints.txt
+          python blackbook.py report --target-inr 4400 | tee data/report.txt
+
+      - name: Commit results
+        run: |
+          git config user.name "blackbook-bot"
+          git config user.email "blackbook-bot@users.noreply.github.com"
+          git add data
+          git commit -m "sweep $(date -u +%FT%TZ)" || echo "nothing to commit"
+          git pull --rebase
+          git push

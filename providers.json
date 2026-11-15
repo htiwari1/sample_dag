@@ -1,0 +1,219 @@
+{
+  "avis_one_direct": {
+    "supplier": "Avis India Mobility Solutions",
+    "channel": "direct",
+    "start_url": "https://www.avis.co.in/one",
+    "vehicle_guarantee": "named_model",
+    "gst_rate": 0.18,
+    "tolls_included": true,
+    "steps": [
+      {
+        "action": "goto",
+        "url": "{start_url}"
+      },
+      {
+        "action": "wait",
+        "ms": 2500
+      },
+      {
+        "action": "click_text",
+        "text": "Chauffeur Drive",
+        "optional": true
+      },
+      {
+        "action": "fill",
+        "selector": "input[placeholder*='Pickup' i]",
+        "value": "{pickup}"
+      },
+      {
+        "action": "wait",
+        "ms": 1500
+      },
+      {
+        "action": "press",
+        "selector": "input[placeholder*='Pickup' i]",
+        "key": "ArrowDown"
+      },
+      {
+        "action": "press",
+        "selector": "input[placeholder*='Pickup' i]",
+        "key": "Enter"
+      },
+      {
+        "action": "fill",
+        "selector": "input[placeholder*='Drop' i]",
+        "value": "{dropoff}"
+      },
+      {
+        "action": "wait",
+        "ms": 1500
+      },
+      {
+        "action": "press",
+        "selector": "input[placeholder*='Drop' i]",
+        "key": "ArrowDown"
+      },
+      {
+        "action": "press",
+        "selector": "input[placeholder*='Drop' i]",
+        "key": "Enter"
+      },
+      {
+        "action": "click_text",
+        "text": "Book Your Ride",
+        "optional": true
+      },
+      {
+        "action": "wait",
+        "ms": 8000
+      }
+    ]
+  },
+  "avis_partner_airindia": {
+    "supplier": "Avis India Mobility Solutions",
+    "channel": "airline_partner",
+    "start_url": "https://www.avis.co.in/partner/AirIndia",
+    "vehicle_guarantee": "named_model",
+    "gst_rate": 0.18,
+    "tolls_included": true,
+    "steps": "inherit:avis_one_direct"
+  },
+  "avis_partner_sc": {
+    "supplier": "Avis India Mobility Solutions",
+    "channel": "card_partner",
+    "start_url": "https://www.avis.co.in/partner/sc",
+    "vehicle_guarantee": "named_model",
+    "gst_rate": 0.18,
+    "tolls_included": true,
+    "promo_note": "SCAVISONE: up to 10% off Avis One, BIN-locked to Standard Chartered Beyond",
+    "steps": "inherit:avis_one_direct"
+  },
+  "transfeero": {
+    "supplier": "Transfeero (local subcontractor)",
+    "channel": "aggregator",
+    "start_url": "https://www.transfeero.com/en/",
+    "vehicle_guarantee": "or_similar",
+    "gst_rate": 0.0,
+    "tolls_included": true,
+    "steps": [
+      {
+        "action": "goto",
+        "url": "{start_url}"
+      },
+      {
+        "action": "wait",
+        "ms": 2500
+      },
+      {
+        "action": "fill",
+        "selector": "input[name*='from' i], input[placeholder*='From' i]",
+        "value": "{pickup}"
+      },
+      {
+        "action": "wait",
+        "ms": 1500
+      },
+      {
+        "action": "press",
+        "selector": "input[name*='from' i], input[placeholder*='From' i]",
+        "key": "Enter"
+      },
+      {
+        "action": "fill",
+        "selector": "input[name*='to' i], input[placeholder*='To' i]",
+        "value": "{dropoff}"
+      },
+      {
+        "action": "wait",
+        "ms": 1500
+      },
+      {
+        "action": "press",
+        "selector": "input[name*='to' i], input[placeholder*='To' i]",
+        "key": "Enter"
+      },
+      {
+        "action": "click_text",
+        "text": "Search",
+        "optional": true
+      },
+      {
+        "action": "wait",
+        "ms": 8000
+      }
+    ]
+  },
+  "blacklane": {
+    "supplier": "Blacklane (local partner)",
+    "channel": "aggregator_premium",
+    "start_url": "https://www.blacklane.com/en/",
+    "vehicle_guarantee": "or_similar",
+    "gst_rate": 0.0,
+    "tolls_included": true,
+    "steps": [
+      {
+        "action": "goto",
+        "url": "{start_url}"
+      },
+      {
+        "action": "wait",
+        "ms": 3000
+      },
+      {
+        "action": "fill",
+        "selector": "input[placeholder*='Address' i] >> nth=0",
+        "value": "{pickup}"
+      },
+      {
+        "action": "wait",
+        "ms": 1500
+      },
+      {
+        "action": "press",
+        "selector": "input[placeholder*='Address' i] >> nth=0",
+        "key": "Enter"
+      },
+      {
+        "action": "fill",
+        "selector": "input[placeholder*='Address' i] >> nth=1",
+        "value": "{dropoff}"
+      },
+      {
+        "action": "wait",
+        "ms": 1500
+      },
+      {
+        "action": "press",
+        "selector": "input[placeholder*='Address' i] >> nth=1",
+        "key": "Enter"
+      },
+      {
+        "action": "click_text",
+        "text": "Search",
+        "optional": true
+      },
+      {
+        "action": "wait",
+        "ms": 8000
+      }
+    ]
+  },
+  "cityflo_luxe": {
+    "supplier": "Cityflo LUXE",
+    "channel": "direct",
+    "start_url": "https://luxe.cityflo.com/airport-transfers",
+    "vehicle_guarantee": "non_target",
+    "gst_rate": 0.0,
+    "tolls_included": true,
+    "steps": [
+      {
+        "action": "goto",
+        "url": "{start_url}"
+      },
+      {
+        "action": "wait",
+        "ms": 6000
+      }
+    ]
+  }
+}
