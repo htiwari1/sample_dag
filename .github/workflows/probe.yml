@@ -1,0 +1,24 @@
+name: avis-city-probe
+on:
+  push:
+    branches: [blackbook]
+    paths: ["tools/**", ".github/workflows/probe.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: mkdir -p data && python tools/avis_city_prices.py | tee data/avis_city_probe.log
+      - run: |
+          git config user.name "blackbook-bot"
+          git config user.email "blackbook-bot@users.noreply.github.com"
+          git add data
+          git commit -m "avis city probe $(date -u +%FT%TZ)" || echo "nothing to commit"
+          git pull --rebase && git push

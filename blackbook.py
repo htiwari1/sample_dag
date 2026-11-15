@@ -175,6 +175,7 @@ VEHICLE_KEYS = re.compile(r"(vehicle|car|model|category|class|name|title|type|pr
 CURRENCY_KEYS = re.compile(r"(currency|curr|iso)", re.I)
 INVENTORY_KEYS = re.compile(r"(available|availability|sold.?out|inventory|stock|slots?|eta)", re.I)
 TAX_KEYS = re.compile(r"(tax|gst|vat|toll|fee|surcharge)", re.I)
+NON_PRICE_KEYS = re.compile(r"(id$|_id|ids?$|extra|per_?km|per_?hr|slash|strike|original|previous|security|deposit)", re.I)
 
 FX_TO_INR = {"INR": 1.0, "USD": float(os.environ.get("BLACKBOOK_USDINR", "88.5")),
              "EUR": float(os.environ.get("BLACKBOOK_EURINR", "102.0")),
@@ -470,7 +471,8 @@ def walk_offers(obj: Any, path: str = "$") -> Iterable[dict[str, Any]]:
     """Yield dicts that look like an offer: a price-ish numeric + a vehicle-ish string nearby."""
     if isinstance(obj, dict):
         prices = {k: to_number(v) for k, v in obj.items()
-                  if PRICE_KEYS.search(k) and not TAX_KEYS.search(k) and to_number(v)}
+                  if PRICE_KEYS.search(k) and not TAX_KEYS.search(k) and not NON_PRICE_KEYS.search(k)
+                  and to_number(v)}
         labels = [str(v) for k, v in obj.items() if VEHICLE_KEYS.search(k) and isinstance(v, str)]
         # vehicle info is often one level down, e.g. {"vehicle": {"name": "..."}}
         for k, v in obj.items():
@@ -481,7 +483,7 @@ def walk_offers(obj: Any, path: str = "$") -> Iterable[dict[str, Any]]:
         if prices and labels:
             # prefer "total"/"final" over "base"
             ranked = sorted(prices.items(), key=lambda kv: (
-                0 if re.search(r"(total|final|grand|payable)", kv[0], re.I) else
+                0 if re.search(r"(total|final|grand|payable|base_?price$|baseprice$|^price$|^fare$)", kv[0], re.I) else
                 2 if re.search(r"(base|net|strike|original|was)", kv[0], re.I) else 1))
             key, val = ranked[0]
             yield {"price": val, "price_key": key, "label": " | ".join(labels)[:300],

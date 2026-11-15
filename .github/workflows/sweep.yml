@@ -3,7 +3,7 @@ name: blackbook-sweep
 on:
   push:
     branches: [blackbook]
-    paths-ignore: ["data/**"]
+    paths: ["providers.json", ".github/workflows/sweep.yml"]
   workflow_dispatch:
     inputs:
       providers:
