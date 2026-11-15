@@ -1,0 +1,21 @@
+provider                 method hits  endpoint  [price fields]
+avis_one_direct          POST      6  apisavis.avis.co.in/api/booking/getmodelprices
+                                      $.result[].baseprice
+                                      $.result[].baseprice2
+                                      $.result[].previousbookingAmount
+                                      $.result[].priceid
+                                      $.result[].subtotal
+                                      $.result[].slashprice
+                                      $.result[].taxprice
+                                      $.result[].totalamount
+blacklane                POST     12  sdk.fra-01.braze.eu/api/v3/data/
+                                      $.config.global_request_rate_limit.endpoint_overrides.banners/sync.refill_rate
+                                      $.config.global_request_rate_limit.endpoint_overrides.content_cards/sync.refill_rate
+                                      $.config.global_request_rate_limit.endpoint_overrides.push/redeliver.refill_rate
+                                      $.config.global_request_rate_limit.refill_rate
+blacklane                GET       6  api.rudderstack.com/sourceConfig/
+                                      $.consentManagementMetadata.providers[].resolutionStrategy
+blacklane                GET       6  content.hotjar.io/cs/tag/settings/52cbf81eb8e9e.json
+                                      $.sampleRate
+                                      $.replayRecordingRate
+                                      $.validationRate

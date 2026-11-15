@@ -1,0 +1,9 @@
+
+Top opportunities (target INR 4,400 all-in)
+
+ 30.0  avis_one_direct        mercedes_e     INR    36,443  lead 342.6h  2026-11-15T21:51:54+00:00
+       Mercedes-Benz E-class or similar |  | 
+       target model (mercedes_e); over target by INR 32,043
+
+Per-channel history (min / median / n)
+  avis_one_direct        mercedes_e        36,443 /    36,443 / 6
