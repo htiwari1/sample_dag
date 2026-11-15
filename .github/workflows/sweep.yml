@@ -1,6 +1,9 @@
 name: blackbook-sweep
 
 on:
+  push:
+    branches: [blackbook]
+    paths-ignore: ["data/**"]
   workflow_dispatch:
     inputs:
       providers:
